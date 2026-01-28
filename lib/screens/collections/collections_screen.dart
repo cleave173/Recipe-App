@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../l10n/app_strings.dart';
 import '../../providers/collection_provider.dart';
@@ -141,7 +142,7 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                     },
                   ),
                   onTap: () {
-                    // Navigate to collection detail
+                    context.push('/collections/${collection.id}');
                   },
                 ),
               );

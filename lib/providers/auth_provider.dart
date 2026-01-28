@@ -152,12 +152,15 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> changePassword(String newPassword) async {
+  Future<bool> changePassword(String currentPassword, String newPassword) async {
+    _error = null;
     try {
-      await _authService.changePassword(newPassword);
+      await _authService.changePassword(currentPassword, newPassword);
+      return true;
     } catch (e) {
-      _error = 'Құпия сөзді өзгерту кезінде қате: $e';
+      _error = e.toString();
       notifyListeners();
+      return false;
     }
   }
 

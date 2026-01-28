@@ -150,7 +150,7 @@ class ProfileScreen extends StatelessWidget {
                 icon: Icons.lock_outline_rounded,
                 title: AppStrings.changePassword,
                 onTap: () {
-                  // Show change password dialog
+                  _showChangePasswordDialog(context);
                 },
               ),
 
@@ -204,21 +204,21 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.people_outline_rounded,
                   title: AppStrings.userManagement,
                   color: AppColors.primaryLight,
-                  onTap: () {},
+                  onTap: () => context.push('/admin/users'),
                 ),
                 _buildMenuItem(
                   context,
                   icon: Icons.category_outlined,
                   title: AppStrings.categoryManagement,
                   color: AppColors.primaryLight,
-                  onTap: () {},
+                  onTap: () => context.push('/admin/recipes'),
                 ),
                 _buildMenuItem(
                   context,
                   icon: Icons.analytics_outlined,
                   title: AppStrings.statistics,
                   color: AppColors.primaryLight,
-                  onTap: () {},
+                  onTap: () => context.push('/admin/statistics'),
                 ),
               ],
 
@@ -293,6 +293,99 @@ class ProfileScreen extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
             child: Text(AppStrings.logout),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showChangePasswordDialog(BuildContext context) {
+    final currentPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text(AppStrings.changePassword),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: currentPasswordController,
+                decoration: const InputDecoration(
+                  labelText: 'Ағымдағы құпия сөз',
+                  prefixIcon: Icon(Icons.lock_outline),
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppStrings.fieldRequired;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: newPasswordController,
+                decoration: const InputDecoration(
+                  labelText: 'Жаңа құпия сөз',
+                  prefixIcon: Icon(Icons.lock_reset),
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppStrings.fieldRequired;
+                  }
+                  if (value.length < 6) {
+                    return AppStrings.invalidPassword;
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text(AppStrings.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                final currentPassword = currentPasswordController.text;
+                final newPassword = newPasswordController.text;
+                Navigator.pop(dialogContext);
+                
+                final success = await context.read<AuthProvider>().changePassword(
+                  currentPassword,
+                  newPassword,
+                );
+                
+                if (context.mounted) {
+                  if (success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Құпия сөз сәтті өзгертілді!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } else {
+                    final error = context.read<AuthProvider>().error;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(error ?? 'Қате орын алды'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              }
+            },
+            child: const Text(AppStrings.save),
           ),
         ],
       ),

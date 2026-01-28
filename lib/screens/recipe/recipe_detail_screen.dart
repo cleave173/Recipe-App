@@ -24,6 +24,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
   late TabController _tabController;
   Recipe? _recipe;
   int? _userRating;
+  String? _userNote;
 
   @override
   void initState() {
@@ -41,6 +42,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
       final userRating = await provider.getUserRating(recipe.firestoreId);
       if (mounted) {
         setState(() => _userRating = userRating);
+      }
+      // Load user's note
+      final userNote = await provider.getUserNote(recipe.firestoreId!);
+      if (mounted) {
+        setState(() => _userNote = userNote);
       }
     }
   }
@@ -501,6 +507,35 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
   }
 
   Widget _buildNotesTab(Recipe recipe) {
+    if (_userNote != null && _userNote!.isNotEmpty) {
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Theme.of(context).dividerColor),
+              ),
+              child: Text(
+                _userNote!,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () => _showNoteDialog(recipe),
+              icon: const Icon(Icons.edit),
+              label: const Text('Жазбаны өзгерту'),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -517,11 +552,44 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
           ),
           const SizedBox(height: 16),
           ElevatedButton.icon(
-            onPressed: () {
-              // Add note dialog
-            },
+            onPressed: () => _showNoteDialog(recipe),
             icon: const Icon(Icons.add),
             label: Text(AppStrings.addNote),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showNoteDialog(Recipe recipe) {
+    final controller = TextEditingController(text: _userNote);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Жазба'),
+        content: TextField(
+          controller: controller,
+          maxLines: 5,
+          decoration: const InputDecoration(
+            hintText: 'Осы рецепт туралы жазба жазыңыз...',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Болдырмау'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final note = controller.text;
+              if (recipe.firestoreId != null) {
+                await context.read<RecipeProvider>().saveUserNote(recipe.firestoreId!, note);
+                setState(() => _userNote = note);
+              }
+              if (mounted) Navigator.pop(context);
+            },
+            child: const Text('Сақтау'),
           ),
         ],
       ),

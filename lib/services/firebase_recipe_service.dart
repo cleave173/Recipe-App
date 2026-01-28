@@ -240,6 +240,36 @@ class FirebaseRecipeService {
     return doc.data()?['rating'] as int?;
   }
 
+  // Save user note for recipe
+  Future<void> saveUserNote(String userId, String recipeId, String note) async {
+    if (!isAvailable) return;
+    
+    await _firestore!
+        .collection('users')
+        .doc(userId)
+        .collection('notes')
+        .doc(recipeId)
+        .set({
+      'note': note,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // Get user note for recipe
+  Future<String?> getUserNote(String userId, String recipeId) async {
+    if (!isAvailable) return null;
+    
+    final doc = await _firestore!
+        .collection('users')
+        .doc(userId)
+        .collection('notes')
+        .doc(recipeId)
+        .get();
+        
+    if (!doc.exists) return null;
+    return doc.data()?['note'] as String?;
+  }
+
   // Get categories
   Future<List<Category>> getCategories() async {
     if (!isAvailable) {

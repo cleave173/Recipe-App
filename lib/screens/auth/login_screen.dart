@@ -191,18 +191,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       
                       const SizedBox(height: 12),
                       
-                      // Forgot password
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            // TODO: Implement forgot password
-                          },
-                          child: const Text(AppStrings.forgotPassword),
-                        ),
-                      ),
-                      
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 32),
                       
                       // Login button
                       Consumer<AuthProvider>(

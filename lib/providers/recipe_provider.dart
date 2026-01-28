@@ -344,6 +344,27 @@ class RecipeProvider extends ChangeNotifier {
       debugPrint('Error rating recipe: $e');
     }
   }
+  Future<void> saveUserNote(String recipeId, String note) async {
+    if (_userId == null) return;
+    
+    try {
+      await _recipeService.saveUserNote(_userId!, recipeId, note);
+    } catch (e) {
+      debugPrint('Error saving user note: $e');
+      rethrow;
+    }
+  }
+
+  Future<String?> getUserNote(String recipeId) async {
+    if (_userId == null) return null;
+    
+    try {
+      return await _recipeService.getUserNote(_userId!, recipeId);
+    } catch (e) {
+      debugPrint('Error loading user note: $e');
+      return null;
+    }
+  }
 }
 
 class RecipeFilters {

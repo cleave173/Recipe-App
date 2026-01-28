@@ -182,13 +182,27 @@ class FirebaseAuthService {
     }
   }
 
-  // Change password
-  Future<void> changePassword(String newPassword) async {
+  // Change password with verification
+  Future<void> changePassword(String currentPassword, String newPassword) async {
     if (!isAvailable) return;
     
     final user = _auth!.currentUser;
-    if (user == null) return;
-    await user.updatePassword(newPassword);
+    if (user == null || user.email == null) {
+      throw 'Пайдаланушы табылмады';
+    }
+    
+    // Reauthenticate with current password
+    final credential = firebase_auth.EmailAuthProvider.credential(
+      email: user.email!,
+      password: currentPassword,
+    );
+    
+    try {
+      await user.reauthenticateWithCredential(credential);
+      await user.updatePassword(newPassword);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      throw _mapFirebaseError(e);
+    }
   }
 
   // Reset password

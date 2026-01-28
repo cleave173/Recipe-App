@@ -1,16 +1,87 @@
-# recipeapp
+# RecipeApp - Тағам Рецепттері
 
-A new Flutter project.
+Қазақ тілінде жазылған рецепттер қосымшасы. Flutter + Firebase.
 
-## Getting Started
+## 🚀 Жобаны орнату
 
-This project is a starting point for a Flutter application.
+### 1. Қажетті құралдар
 
-A few resources to get you started if this is your first Flutter project:
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.0+)
+- [Android Studio](https://developer.android.com/studio) немесе [VS Code](https://code.visualstudio.com/)
+- Git
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 2. Жобаны клондау
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+git clone <repository-url>
+cd RecipeApp
+```
+
+### 3. Тәуелділіктерді орнату
+
+```bash
+flutter pub get
+```
+
+### 4. Firebase-ті баптау (МАҢЫЗДЫ!)
+
+Жоба Firebase-пен жұмыс істейді. Жаңа адамға Firebase-ті қайта баптау керек:
+
+#### Опция А: Бар Firebase жобасын пайдалану
+Егер Firebase конфигурация файлдары бар болса (`google-services.json`, `GoogleService-Info.plist`), онда қосымша әрекет қажет емес.
+
+#### Опция Б: Жаңа Firebase жобасы құру
+
+1. [Firebase Console](https://console.firebase.google.com) - жаңа жоба құру
+2. Flutter қосымшасын қосу:
+   ```bash
+   dart pub global activate flutterfire_cli
+   flutterfire configure
+   ```
+3. Firestore Database қосу (test mode)
+4. Authentication → Email/Password қосу
+
+### 5. Қосымшаны іске қосу
+
+```bash
+# Chrome/Web үшін
+flutter run -d chrome
+
+# Android үшін
+flutter run -d android
+
+# Windows үшін
+flutter run -d windows
+```
+
+## 📁 Жоба құрылымы
+
+```
+lib/
+├── config/          # Тема, маршруттар, константалар
+├── l10n/            # Қазақ тілі аударымдары
+├── models/          # Деректер моделдері
+├── providers/       # State management
+├── screens/         # UI экрандары
+├── services/        # Firebase сервистері
+└── widgets/         # Қайта қолданылатын виджеттер
+```
+
+## 👤 Админ құқықтарын беру
+
+1. Firebase Console → Firestore Database
+2. `users` коллекциясын табу
+3. Қажетті пайдаланушының құжатын ашу
+4. `role` өрісін `"user"` → `"admin"` өзгерту
+
+## 🔧 Негізгі функциялар
+
+- ✅ Тіркелу / Кіру
+- ✅ Рецепттер қосу, өзгерту, өшіру
+- ✅ Суреттерді ImgBB-ге жүктеу
+- ✅ Таңдаулылар
+- ✅ Коллекциялар
+- ✅ Жеке жазбалар
+- ✅ Рейтинг жүйесі
+- ✅ Іздеу және сүзгілеу
+- ✅ Админ панелі

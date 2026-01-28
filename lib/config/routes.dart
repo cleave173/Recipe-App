@@ -13,6 +13,10 @@ import '../screens/collections/collections_screen.dart';
 import '../screens/shopping/shopping_list_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/my_recipes_screen.dart';
+import '../screens/collections/collection_detail_screen.dart';
+import '../screens/admin/admin_user_management_screen.dart';
+import '../screens/admin/admin_recipe_management_screen.dart';
+import '../screens/admin/admin_statistics_screen.dart';
 import '../screens/main_shell.dart';
 
 class AppRouter {
@@ -74,6 +78,16 @@ class AppRouter {
               path: '/collections',
               name: 'collections',
               builder: (context, state) => const CollectionsScreen(),
+              routes: [
+                GoRoute(
+                  path: ':id',
+                  name: 'collection_detail',
+                  builder: (context, state) {
+                    final id = int.parse(state.pathParameters['id']!);
+                    return CollectionDetailScreen(collectionId: id);
+                  },
+                ),
+              ],
             ),
             GoRoute(
               path: '/profile',
@@ -114,6 +128,21 @@ class AppRouter {
           path: '/my-recipes',
           name: 'my_recipes',
           builder: (context, state) => const MyRecipesScreen(),
+        ),
+        GoRoute(
+          path: '/admin/users',
+          name: 'admin_users',
+          builder: (context, state) => const AdminUserManagementScreen(),
+        ),
+        GoRoute(
+          path: '/admin/recipes',
+          name: 'admin_recipes',
+          builder: (context, state) => const AdminRecipeManagementScreen(),
+        ),
+        GoRoute(
+          path: '/admin/statistics',
+          name: 'admin_statistics',
+          builder: (context, state) => const AdminStatisticsScreen(),
         ),
       ],
     );
