@@ -403,14 +403,26 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
       separatorBuilder: (_, __) => const Divider(),
       itemBuilder: (context, index) {
         final ingredient = recipe.ingredients[index];
-        return CheckboxListTile(
-          value: ingredient.isPurchased,
-          onChanged: (value) {
-            // Toggle ingredient purchased state
-          },
+        return ListTile(
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                '${index + 1}',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          ),
           title: Text(ingredient.name),
           subtitle: Text(ingredient.formattedQuantity),
-          controlAffinity: ListTileControlAffinity.leading,
         );
       },
     );
