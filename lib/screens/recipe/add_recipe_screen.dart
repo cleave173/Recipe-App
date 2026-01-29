@@ -38,6 +38,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final List<RecipeStep> _steps = [];
   bool _isEditing = false;
   bool _isLoading = false;
+  String? _firestoreId;
 
   @override
   void initState() {
@@ -59,6 +60,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         _difficulty = recipe.difficulty;
         _categoryId = recipe.categoryId;
         _imageUrl = recipe.imageUrl;
+        _firestoreId = recipe.firestoreId;
         _ingredients.addAll(recipe.ingredients);
         _steps.addAll(recipe.steps);
       });
@@ -743,6 +745,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       ingredients: _ingredients,
       steps: _steps,
       servings: int.tryParse(_servingsController.text) ?? 4,
+      firestoreId: _firestoreId,
     );
 
     Recipe? result;
@@ -761,7 +764,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      context.pop();
+      // Возвращаем true чтобы detail screen перезагрузил данные
+      context.pop(true);
     } else if (mounted) {
       // Показываем ошибку
       ScaffoldMessenger.of(context).showSnackBar(

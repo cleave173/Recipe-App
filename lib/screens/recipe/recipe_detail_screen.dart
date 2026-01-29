@@ -122,73 +122,44 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
                       onPressed: () => provider.toggleFavorite(recipe.id),
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
-                      shape: BoxShape.circle,
+                  if (recipe.authorId == provider.currentUserId)
+                    Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert_rounded),
+                        onSelected: (value) => _handleMenuAction(value, recipe),
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'edit',
+                            child: Row(
+                              children: [
+                                const Icon(Icons.edit_outlined),
+                                const SizedBox(width: 12),
+                                Text(AppStrings.edit),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuDivider(),
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete_outline, color: theme.colorScheme.error),
+                                const SizedBox(width: 12),
+                                Text(
+                                  AppStrings.delete,
+                                  style: TextStyle(color: theme.colorScheme.error),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    child: PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert_rounded),
-                      onSelected: (value) => _handleMenuAction(value, recipe),
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              const Icon(Icons.edit_outlined),
-                              const SizedBox(width: 12),
-                              Text(AppStrings.edit),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: 'collection',
-                          child: Row(
-                            children: [
-                              const Icon(Icons.collections_bookmark_outlined),
-                              const SizedBox(width: 12),
-                              Text(AppStrings.addToCollection),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: 'shopping',
-                          child: Row(
-                            children: [
-                              const Icon(Icons.shopping_cart_outlined),
-                              const SizedBox(width: 12),
-                              Text(AppStrings.addToShoppingList),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: 'share',
-                          child: Row(
-                            children: [
-                              const Icon(Icons.share_outlined),
-                              const SizedBox(width: 12),
-                              Text(AppStrings.share),
-                            ],
-                          ),
-                        ),
-                        const PopupMenuDivider(),
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              Icon(Icons.delete_outline, color: theme.colorScheme.error),
-                              const SizedBox(width: 12),
-                              Text(
-                                AppStrings.delete,
-                                style: TextStyle(color: theme.colorScheme.error),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(
@@ -612,22 +583,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
   void _handleMenuAction(String action, Recipe recipe) async {
     switch (action) {
       case 'edit':
-        context.push('/edit-recipe/${recipe.id}');
-        break;
-      case 'collection':
-        _showAddToCollectionDialog();
-        break;
-      case 'shopping':
-        final shoppingProvider = context.read<ShoppingListProvider>();
-        await shoppingProvider.addFromRecipe(recipe.id);
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Сатып алу тізіміне қосылды')),
-          );
+        final result = await context.push<bool>('/edit-recipe/${recipe.id}');
+        if (result == true) {
+          // Перезагружаем рецепт после редактирования
+          _loadRecipe();
         }
-        break;
-      case 'share':
-        // TODO: Implement share
         break;
       case 'delete':
         _showDeleteConfirmation(recipe);

@@ -7,6 +7,7 @@ import 'config/theme.dart';
 import 'config/routes.dart';
 import 'providers/providers.dart';
 import 'services/services.dart';
+import 'l10n/kazakh_localizations.dart';
 
 // Global flag to check if Firebase is initialized
 bool isFirebaseInitialized = false;
@@ -92,6 +93,17 @@ class RecipeApp extends StatelessWidget {
           return MaterialApp.router(
             title: 'Рецепттер',
             debugShowCheckedModeBanner: false,
+            
+            // Kazakh locale
+            locale: const Locale('kk', 'KZ'),
+            supportedLocales: const [
+              Locale('kk', 'KZ'),
+              Locale('ru', 'RU'),
+            ],
+            localizationsDelegates: const [
+              KazakhMaterialLocalizationsDelegate(),
+              KazakhWidgetsLocalizationsDelegate(),
+            ],
             
             // Theme
             theme: AppTheme.lightTheme,

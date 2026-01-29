@@ -241,16 +241,46 @@ class RecipeProvider extends ChangeNotifier {
     if (recipe.firestoreId == null) return null;
 
     try {
+      // Сохраняем authorId из оригинального рецепта
+      final originalRecipe = _recipes.firstWhere(
+        (r) => r.id == recipe.id,
+        orElse: () => recipe,
+      );
+      
       final updatedRecipe = await _recipeService.updateRecipe(
         recipe.firestoreId!,
         recipe,
       );
+      
+      // Создаём рецепт с сохранёнными данными автора
+      final recipeWithAuthor = Recipe(
+        id: updatedRecipe.id,
+        firestoreId: updatedRecipe.firestoreId ?? recipe.firestoreId,
+        userId: originalRecipe.userId,
+        authorId: originalRecipe.authorId,
+        authorName: originalRecipe.authorName,
+        title: updatedRecipe.title,
+        description: updatedRecipe.description,
+        cookingTime: updatedRecipe.cookingTime,
+        difficulty: updatedRecipe.difficulty,
+        categoryId: updatedRecipe.categoryId,
+        imageUrl: updatedRecipe.imageUrl,
+        servings: updatedRecipe.servings,
+        createdAt: originalRecipe.createdAt,
+        rating: originalRecipe.rating,
+        ratingCount: originalRecipe.ratingCount,
+        ingredients: updatedRecipe.ingredients,
+        steps: updatedRecipe.steps,
+        isVegetarian: updatedRecipe.isVegetarian,
+        isDietary: updatedRecipe.isDietary,
+      );
+      
       final index = _recipes.indexWhere((r) => r.id == recipe.id);
       if (index != -1) {
-        _recipes[index] = updatedRecipe;
+        _recipes[index] = recipeWithAuthor;
         notifyListeners();
       }
-      return updatedRecipe;
+      return recipeWithAuthor;
     } catch (e) {
       _error = 'Рецептті жаңарту кезінде қате: $e';
       notifyListeners();
